@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  web:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    volumes:
+      - '/workspace/app/node_modules'
+      - './:/workspace/app'
+    depends_on:
+      - mongo
+    # network_mode: service:mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./mongoDB_data:/data
+    ports:
+      - '27017:27017'
+
+  redis:
+    image: redis
+    command: ['redis-server', '--bind', 'redis', '--port', '6379']
+    # ports:
+    #   - "6379:6379"
+    # volumes:
+    #   - "./data:/data"
+    # command: redis-server --appendonly yes

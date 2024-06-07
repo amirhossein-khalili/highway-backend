@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Song API
+  description: API documentation for managing songs
+  version: 1.0.0
+paths:
+  /api/songs:
+    post:
+      summary: Create a new song
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the song
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the song
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the song (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all songs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+  /songs/{id}:
+    get:
+      summary: Get a song by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the song
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        '404':
+          description: Song not found
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the song
+        title:
+          type: string
+          description: The title of the song
+        url:
+          type: string
+          format: uri
+          description: The URL of the song
+        rating:
+          type: number
+          format: float
+          description: The rating of the song (0 to 5)
+      required:
+        - title
+        - url
