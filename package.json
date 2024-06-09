@@ -1,8 +1,8 @@
 {
   "type": "module",
-  "name": "1",
+  "name": "highwayproject",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a simple pilot project to investigate highway traffic",
   "main": "app.js",
   "scripts": {
     "test": "jest",
@@ -14,7 +14,7 @@
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix ."
   },
-  "author": "",
+  "author": "AmirKhalili",
   "license": "ISC",
   "dependencies": {
     "babel-plugin-transform-runtime": "^6.23.0",

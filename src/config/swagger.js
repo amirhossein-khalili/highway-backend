@@ -27,8 +27,8 @@ swaggerDirs.forEach((swaggerDir) => {
 
 export default {
   info: {
-    title: 'boilerplate API Title',
-    description: 'boilerplate Description',
+    title: 'highway API Title',
+    description: 'highway Description',
     version: '1.0.0',
     security: [
       {
