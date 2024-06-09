@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Cartracker API
+  description: API documentation for managing cartrackers
+  version: 1.0.0
+paths:
+  /api/cartrackers:
+    post:
+      summary: Create a new cartracker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the cartracker
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the cartracker
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the cartracker (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all cartrackers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cartracker'
+  /cartrackers/{id}:
+    get:
+      summary: Get a cartracker by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the cartracker
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cartracker'
+        '404':
+          description: Cartracker not found
+components:
+  schemas:
+    Cartracker:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the cartracker
+        title:
+          type: string
+          description: The title of the cartracker
+        url:
+          type: string
+          format: uri
+          description: The URL of the cartracker
+        rating:
+          type: number
+          format: float
+          description: The rating of the cartracker (0 to 5)
+      required:
+        - title
+        - url

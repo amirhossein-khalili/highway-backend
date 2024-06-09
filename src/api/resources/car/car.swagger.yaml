@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Car API
+  description: API documentation for managing cars
+  version: 1.0.0
+paths:
+  /api/cars:
+    post:
+      summary: Create a new car
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the car
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the car
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the car (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all cars
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+  /cars/{id}:
+    get:
+      summary: Get a car by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the car
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+        '404':
+          description: Car not found
+components:
+  schemas:
+    Car:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the car
+        title:
+          type: string
+          description: The title of the car
+        url:
+          type: string
+          format: uri
+          description: The URL of the car
+        rating:
+          type: number
+          format: float
+          description: The rating of the car (0 to 5)
+      required:
+        - title
+        - url

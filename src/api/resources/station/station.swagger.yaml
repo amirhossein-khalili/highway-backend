@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Station API
+  description: API documentation for managing stations
+  version: 1.0.0
+paths:
+  /api/stations:
+    post:
+      summary: Create a new station
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the station
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the station
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the station (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all stations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Station'
+  /stations/{id}:
+    get:
+      summary: Get a station by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the station
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Station'
+        '404':
+          description: Station not found
+components:
+  schemas:
+    Station:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the station
+        title:
+          type: string
+          description: The title of the station
+        url:
+          type: string
+          format: uri
+          description: The URL of the station
+        rating:
+          type: number
+          format: float
+          description: The rating of the station (0 to 5)
+      required:
+        - title
+        - url
