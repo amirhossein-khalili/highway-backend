@@ -11,7 +11,16 @@ class AuthController {
         password: AuthService.encryptPassword(req.body.password),
       });
 
-      res.status(201).json({ success: true });
+      res.status(201).json({
+        success: true,
+        message: 'User created successfully',
+        data: {
+          // id: newUser._id,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+        },
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json('an error occurred please try again later');
