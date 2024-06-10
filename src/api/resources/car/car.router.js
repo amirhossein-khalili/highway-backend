@@ -2,6 +2,7 @@ import { Router } from 'express';
 import CarController from './car.controller.js';
 import validateSchema from '../../../utils/validateSchema.utils.js';
 import newCarSchema from './car.validation.js';
+import CarMiddleware from './car.middleware.js';
 
 class CarRouter {
   constructor() {
@@ -12,7 +13,7 @@ class CarRouter {
   initializeRoutes() {
     this.router
       .route('/')
-      .get(CarController.findAll)
+      .get(CarMiddleware.proccessQueries, CarController.findAll)
       .post(validateSchema(newCarSchema), CarController.create);
 
     this.router
