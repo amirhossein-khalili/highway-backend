@@ -25,7 +25,7 @@ const cartrackerSchema = new Schema(
   { timestamps: true }
 );
 
-cartrackerSchema.plugin(AutoIncrement, { inc_field: '_id' });
+cartrackerSchema.plugin(AutoIncrement, { inc_field: 'cartrackerId' });
 cartrackerSchema.plugin(mongoosePagination);
 
 export default model('Cartracker', cartrackerSchema);

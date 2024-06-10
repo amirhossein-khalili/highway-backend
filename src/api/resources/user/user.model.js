@@ -31,7 +31,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.plugin(AutoIncrement, { inc_field: '_id' });
+userSchema.plugin(AutoIncrement, { inc_field: 'userId' });
 userSchema.plugin(mongoosePagination);
 
 export default model('User', userSchema);

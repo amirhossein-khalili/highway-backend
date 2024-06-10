@@ -24,6 +24,6 @@ const stationSchema = new Schema(
   },
   { timestamps: true }
 );
-stationSchema.plugin(AutoIncrement, { inc_field: '_id' });
+stationSchema.plugin(AutoIncrement, { inc_field: 'stationId' });
 stationSchema.plugin(mongoosePagination);
 export default model('Station', stationSchema);

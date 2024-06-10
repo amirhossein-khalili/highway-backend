@@ -26,7 +26,7 @@ const carSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-carSchema.plugin(AutoIncrement, { inc_field: '_id' });
+carSchema.plugin(AutoIncrement, { inc_field: 'carId' });
 carSchema.plugin(mongoosePagination);
 
 export default model('Car', carSchema);
