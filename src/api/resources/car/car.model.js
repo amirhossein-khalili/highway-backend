@@ -15,7 +15,7 @@ const carSchema = new mongoose.Schema(
     length: Number,
     loadVolume: Number,
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Number,
       ref: 'User',
     },
     softDelete: {
@@ -23,10 +23,13 @@ const carSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true, _id: false }
 );
 
-carSchema.plugin(AutoIncrement, { inc_field: 'carId' });
+carSchema.plugin(AutoIncrement, {
+  id: 'car_seq',
+  inc_field: '_id',
+});
 carSchema.plugin(mongoosePagination);
 
 export default model('Car', carSchema);
