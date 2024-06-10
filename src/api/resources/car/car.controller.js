@@ -21,15 +21,22 @@ class CarController {
       const options = {
         page: parseInt(page, 10) || 1,
         limit: parseInt(perPage, 10) || 10,
+        populate: {
+          path: 'owner',
+          match: req.itemQueries['owner.age'] ? { age: req.itemQueries['owner.age'] } : {},
+          select: 'age',
+        },
         select: CarController.selectionCars,
       };
 
-      const cars = await Car.paginate({}, options);
+      const query = req.itemQueries || {};
+
+      const cars = await Car.paginate(query, options);
 
       return res.json(cars);
     } catch (error) {
       console.error(error);
-      res.status(500).json('an error occurred please try again later');
+      res.status(500).json('An error occurred, please try again later');
     }
   }
 
