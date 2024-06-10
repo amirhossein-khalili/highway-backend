@@ -16,10 +16,7 @@ const userSchema = new Schema(
       enum: ['admin', 'client', 'superadmin'],
       default: 'client',
     },
-    ownerCar: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Car',
-    },
+    ownerCar: Number,
     softDelete: {
       type: Boolean,
       default: false,
@@ -28,10 +25,13 @@ const userSchema = new Schema(
     phoneNumber: { type: String, unique: true },
     password: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, _id: false }
 );
 
-userSchema.plugin(AutoIncrement, { inc_field: 'userId' });
+userSchema.plugin(AutoIncrement, {
+  id: 'user_seq',
+  inc_field: '_id',
+});
 userSchema.plugin(mongoosePagination);
 
 export default model('User', userSchema);

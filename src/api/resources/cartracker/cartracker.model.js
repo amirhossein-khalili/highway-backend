@@ -6,7 +6,7 @@ const AutoIncrement = mongooseSequence(mongoose);
 const cartrackerSchema = new Schema(
   {
     _id: Number,
-    car: { type: mongoose.Schema.Types.ObjectId, ref: 'Car' },
+    car: { type: Number, ref: 'Car' },
     location: [
       {
         type: {
@@ -22,7 +22,7 @@ const cartrackerSchema = new Schema(
     ],
     date: Date,
   },
-  { timestamps: true }
+  { timestamps: true, _id: false }
 );
 
 cartrackerSchema.plugin(AutoIncrement, { inc_field: 'cartrackerId' });
