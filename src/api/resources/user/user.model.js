@@ -5,7 +5,7 @@ const AutoIncrement = mongooseSequence(mongoose);
 
 const userSchema = new Schema(
   {
-    _id: Number,
+    // _id: Number,
     firstName: String,
     lastName: String,
     nationalCode: String,
@@ -17,24 +17,24 @@ const userSchema = new Schema(
       default: 'client',
     },
     ownerCar: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Car',
     },
     softDelete: {
       type: Boolean,
       default: false,
     },
-    email: { type: String, unique: true },
-    phoneNumber: { type: String, unique: true },
+    email: String,
+    phoneNumber: String,
     password: { type: String },
   },
-  { timestamps: true, _id: false }
+  { timestamps: true }
 );
 
-userSchema.plugin(AutoIncrement, {
-  id: 'user_seq',
-  inc_field: '_id',
-});
+// userSchema.plugin(AutoIncrement, {
+//   id: 'user_seq',
+//   inc_field: '_id',
+// });
 userSchema.plugin(mongoosePagination);
 
 export default model('User', userSchema);

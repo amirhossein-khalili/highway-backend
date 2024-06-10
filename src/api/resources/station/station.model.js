@@ -1,15 +1,16 @@
 import { Schema, model } from 'mongoose';
 import mongoosePagination from 'mongoose-paginate-v2';
-import mongooseSequence from 'mongoose-sequence';
-const AutoIncrement = mongooseSequence(mongoose);
+// import mongooseSequence from 'mongoose-sequence';
+// const AutoIncrement = mongooseSequence(mongoose);
 
 const stationSchema = new Schema(
   {
-    _id: Number,
+    // _id: Number,
     name: String,
     tollPerCross: Number,
     location: [
       {
+        _id: false,
         type: {
           type: String,
           enum: ['point'],
@@ -22,11 +23,11 @@ const stationSchema = new Schema(
       },
     ],
   },
-  { timestamps: true, _id: false }
+  { timestamps: true }
 );
-stationSchema.plugin(AutoIncrement, {
-  id: 'station_seq',
-  inc_field: '_id',
-});
+// stationSchema.plugin(AutoIncrement, {
+//   id: 'station_seq',
+//   inc_field: '_id',
+// });
 stationSchema.plugin(mongoosePagination);
 export default model('Station', stationSchema);

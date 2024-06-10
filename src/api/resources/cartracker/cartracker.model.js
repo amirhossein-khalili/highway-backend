@@ -5,10 +5,11 @@ const AutoIncrement = mongooseSequence(mongoose);
 
 const cartrackerSchema = new Schema(
   {
-    _id: Number,
-    car: { type: Number, ref: 'Car' },
+    // _id: Number,
+    car: { type: mongoose.Schema.Types.ObjectId, ref: 'Car' },
     location: [
       {
+        _id: false,
         type: {
           type: String,
           enum: ['point'],
@@ -22,10 +23,10 @@ const cartrackerSchema = new Schema(
     ],
     date: Date,
   },
-  { timestamps: true, _id: false }
+  { timestamps: true }
 );
 
-cartrackerSchema.plugin(AutoIncrement, { inc_field: 'cartrackerId' });
+// cartrackerSchema.plugin(AutoIncrement, { inc_field: 'cartrackerId' });
 cartrackerSchema.plugin(mongoosePagination);
 
 export default model('Cartracker', cartrackerSchema);
