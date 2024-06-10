@@ -1,13 +1,12 @@
 import mongoose, { Schema, model } from 'mongoose';
 import mongoosePagination from 'mongoose-paginate-v2';
+import mongooseSequence from 'mongoose-sequence';
+const AutoIncrement = mongooseSequence(mongoose);
 
 const userSchema = new Schema(
   {
     _id: Number,
-    firstName: {
-      type: String,
-      require: [true, 'user must have a firstName'],
-    },
+    firstName: String,
     lastName: String,
     nationalCode: String,
     age: Number,
@@ -32,6 +31,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+userSchema.plugin(AutoIncrement, { inc_field: '_id' });
 userSchema.plugin(mongoosePagination);
 
 export default model('User', userSchema);

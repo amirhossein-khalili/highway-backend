@@ -1,5 +1,7 @@
 import { model, mongoose } from 'mongoose';
 import mongoosePagination from 'mongoose-paginate-v2';
+import mongooseSequence from 'mongoose-sequence';
+const AutoIncrement = mongooseSequence(mongoose);
 
 const carSchema = new mongoose.Schema(
   {
@@ -24,5 +26,7 @@ const carSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+cartrackerSchema.plugin(AutoIncrement, { inc_field: '_id' });
 carSchema.plugin(mongoosePagination);
+
 export default model('Car', carSchema);
