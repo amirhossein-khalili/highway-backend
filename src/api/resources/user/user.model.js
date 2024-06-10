@@ -16,7 +16,10 @@ const userSchema = new Schema(
       enum: ['admin', 'client', 'superadmin'],
       default: 'client',
     },
-    ownerCar: Number,
+    ownerCar: {
+      type: Number,
+      ref: 'Car',
+    },
     softDelete: {
       type: Boolean,
       default: false,
