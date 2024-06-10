@@ -6,8 +6,8 @@ import { dirname, join } from 'path';
 import User from '../src/api/resources/user/user.model.js';
 import Car from '../src/api/resources/car/car.model.js';
 import Cartracker from '../src/api/resources/cartracker/cartracker.model.js';
-
-import { connect } from '../src/config/db.js';
+import dotenv, { config } from 'dotenv';
+dotenv.config();
 
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -46,9 +46,8 @@ const convertLocation = (location) => {
 const migrateData = async () => {
   try {
     // Connect to MongoDB
-    mongoose.connect('mongodb://localhost:27017/highwayDB');
+    mongoose.connect(process.env.DB);
 
-    console.log(process.env.DB);
     // Insert Users and Cars
     for (const userData of usersData) {
       const cars = userData.ownerCar;
