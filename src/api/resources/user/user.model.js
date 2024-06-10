@@ -12,7 +12,11 @@ const userSchema = new Schema(
     nationalCode: String,
     age: Number,
     totalTollPaid: Number,
-    role: ['admin', 'client', 'superadmin'],
+    role: {
+      type: String,
+      enum: ['admin', 'client', 'superadmin'],
+      default: 'client',
+    },
     ownerCar: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Car',
