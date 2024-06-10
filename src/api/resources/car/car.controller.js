@@ -1,8 +1,8 @@
 import Car from './car.model.js';
 
 class CarController {
-  static selectionCar = 'title url rating';
-  static selectionCars = 'title url rating';
+  static selectionCar = 'type color length owner';
+  static selectionCars = 'type color length owner';
 
   static async create(req, res, next) {
     try {
@@ -35,7 +35,10 @@ class CarController {
 
   static async findOne(req, res, next) {
     try {
-      const car = await Car.findById(req.params.id).select(CarController.selectionCars);
+      const car = await Car.findById(req.params.id)
+        .select(CarController.selectionCars)
+        .populate('owner', 'id firstName');
+
       if (!car) return res.status(404).json({ message: 'car not found ' });
       return res.json(car);
     } catch (error) {
