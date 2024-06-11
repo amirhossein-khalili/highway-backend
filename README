@@ -1,0 +1,61 @@
+# highway-test-project
+
+This project allows users to register and log in using authentication endpoints. By default, the username can be either the national code or mobile number, and the password is required for login.
+
+## Getting Started
+
+Before using the project, follow these steps:
+
+### 1. Run Migrations
+
+Ensure your database is set up correctly by running the migrations:
+
+```bash
+npm run migration
+```
+
+### 2. Start the Project
+
+Once the migrations are complete, you can start the project:
+
+```bash
+npm start
+```
+
+## Authentication Endpoints
+
+Users can interact with the following authentication endpoints to register and log in:
+
+- **Register**: `/api/auth/register`
+- **Login**: `/api/auth/login`
+
+## Default Credentials
+
+- **Username**: National code or mobile number
+- **Password**: User's password
+
+## Example Requests
+
+### Register
+
+```http
+POST /api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "user's national code or mobile number",
+  "password": "user's password"
+}
+```
+
+### Login
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user's national code or mobile number",
+  "password": "user's password"
+}
+```
