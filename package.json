@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "migration": "node migrations/roads.migration.js && node migrations/station.migration.js && node migrations/user.migration.js "
   },
   "author": "AmirKhalili",
   "license": "ISC",
