@@ -1,8 +1,8 @@
 import Station from './station.model.js';
 
 class StationController {
-  static selectionStation = 'title url rating';
-  static selectionStations = 'title url rating';
+  static selectionStation = 'name tollPerCross location';
+  static selectionStations = 'name tollPerCross location';
 
   static async create(req, res, next) {
     try {
