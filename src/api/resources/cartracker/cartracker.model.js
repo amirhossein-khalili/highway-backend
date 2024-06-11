@@ -12,7 +12,7 @@ const cartrackerSchema = new Schema(
         _id: false,
         type: {
           type: String,
-          enum: ['point'],
+          enum: ['MultiLineString', 'point'],
           default: 'point',
         },
         coordinates: {
