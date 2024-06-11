@@ -1,8 +1,9 @@
+import CartrackerHelper from './cartracker.helper.js';
 import Cartracker from './cartracker.model.js';
 
 class CartrackerController {
-  static selectionCartracker = 'title url rating';
-  static selectionCartrackers = 'title url rating';
+  static selectionCartracker = 'car location date';
+  static selectionCartrackers = 'car location date';
 
   static async create(req, res, next) {
     try {
@@ -65,6 +66,33 @@ class CartrackerController {
       const cartrackerRemoved = await Cartracker.findByIdAndDelete(req.params.id);
       if (!cartrackerRemoved) return res.status(404).json({ message: 'cartracker not found ' });
       res.json(cartrackerRemoved);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json('an error occurred please try again later');
+    }
+  }
+
+  static async illegalTrafficHeavyVehicles(req, res, next) {
+    try {
+      const heavyCars = req.heavyCars;
+      const narrowRoads = req.narrowRoads;
+      const polygan = await CartrackerHelper.convertToPolygonCoordinates(
+        narrowRoads.map((road) => road.location.coordinates)
+      );
+
+      const cartrackers = await Cartracker.find({
+        car: { $in: heavyCars },
+        'location.coordinates': {
+          $geoWithin: {
+            $geometry: {
+              type: 'MultiLineString',
+              coordinates: polygan,
+            },
+          },
+        },
+      }).populate('car');
+
+      res.status(200).json({ heavyVehicles: cartrackers });
     } catch (error) {
       console.error(error);
       res.status(500).json('an error occurred please try again later');
