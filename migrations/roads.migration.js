@@ -15,41 +15,42 @@ const __dirname = dirname(__filename);
 // Read data from JSON file
 const dataFilePath = join(__dirname, '../data/roads.json');
 const rawData = readFileSync(dataFilePath, 'utf8');
+const roadData = JSON.parse(rawData);
 
-function parseMultiLineString(geom) {
-  // Extract coordinates from the MULTILINESTRING string
-  const matches = geom.match(/MULTILINESTRING\s*\(\(([^)]+)\)\)/);
-  if (matches) {
-    const lines = matches[1].split('), (');
-    return lines.map((line) => line.split(', ').map((point) => point.split(' ').map(Number)));
-  }
-  return [];
+function extractCoordinates(data) {
+  const geom = data.geom;
+  const coordinatesString = geom.match(/MULTILINESTRING\s*\(\(([^)]+)\)\)/)[1];
+  const coordinates = coordinatesString.split(',').map((coord) => {
+    const [longitude, latitude] = coord.trim().split(' ').map(Number);
+    return [longitude, latitude];
+  });
+
+  return coordinates;
 }
 
-const roadData = JSON.parse(rawData);
 const migrateData = async () => {
   try {
-    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/highwayDB', {
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.DB);
 
     for (const data of roadData) {
-      const geoms = parseMultiLineString(data.geom);
-      for (const g of geoms) {
-        Road.create({
+      const geom = extractCoordinates(data);
+      if (typeof geom[0][0] !== 'number') {
+      } else {
+        const multiLineString = { type: 'MultiLineString', coordinates: geom };
+
+        await Road.create({
           name: data.name,
           width: data.width,
-          geom: { type: 'MultiLineString', coordinates: g },
+          location: multiLineString,
         });
       }
     }
 
-    mongoose.disconnect();
-    console.log('Migration completed.');
+    // console.log('Migration completed.');
   } catch (error) {
     console.error('Error migrating data:', error);
-    mongoose.connection.close();
+  } finally {
+    mongoose.disconnect();
   }
 };
 

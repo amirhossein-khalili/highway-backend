@@ -7,6 +7,7 @@ import User from '../src/api/resources/user/user.model.js';
 import Car from '../src/api/resources/car/car.model.js';
 import Cartracker from '../src/api/resources/cartracker/cartracker.model.js';
 import dotenv, { config } from 'dotenv';
+import authService from '../src/api/resources/auth/auth.service.js';
 dotenv.config();
 
 // Convert import.meta.url to __dirname equivalent
@@ -50,46 +51,57 @@ const migrateData = async () => {
 
     // Insert Users and Cars
     for (const userData of usersData) {
-      const cars = userData.ownerCar;
-
-      const user = await User.create({
-        firstName: userData.name,
-        nationalCode: userData.national_code,
-        age: userData.age,
-        totalTollPaid: userData.total_toll_paid,
-      });
-      const newUserId = user._id;
-
-      for (const car of cars) {
-        const resp = await Car.create({
-          // _id: car._id,
-          type: car.type,
-          color: car.color,
-          length: car.length,
-          loadVolume: car.load_volume,
-          owner: newUserId,
+      try {
+        const cars = userData.ownerCar;
+        const password = userData.national_code.toString() || '1234';
+        const user = await User.create({
+          firstName: userData.name,
+          nationalCode: userData.national_code,
+          age: userData.age,
+          password: authService.encryptPassword(password),
+          totalTollPaid: userData.total_toll_paid,
         });
-        const pastCarId = car.id;
-        const newCarId = resp._id;
-        const cartrackers = cartrackersData.filter((item) => item.car === pastCarId);
+        const newUserId = user._id;
 
-        for (const cartracker of cartrackers) {
-          const transformedLocation = convertLocation(cartracker.location);
-          // console.log(transformedLocation.coordinates);
-          const resp2 = Cartracker.create({
-            car: newCarId,
-            date: cartracker.date,
-            location: { type: 'point', coordinates: transformedLocation },
-          });
+        for (const car of cars) {
+          try {
+            const resp = await Car.create({
+              // _id: car._id,
+              type: car.type,
+              color: car.color,
+              length: car.length,
+              loadVolume: car.load_volume,
+              owner: newUserId,
+            });
+            const pastCarId = car.id;
+            const newCarId = resp._id;
+            const cartrackers = cartrackersData.filter((item) => item.car === pastCarId);
+
+            for (const cartracker of cartrackers) {
+              try {
+                const transformedLocation = convertLocation(cartracker.location);
+                // console.log(transformedLocation.coordinates);
+                const resp2 = Cartracker.create({
+                  car: newCarId,
+                  date: cartracker.date,
+                  location: { type: 'point', coordinates: transformedLocation },
+                });
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
+      } catch (err) {
+        console.log(err);
       }
     }
-
-    mongoose.connection.close();
   } catch (error) {
     console.error('Error migrating data:', error);
-    mongoose.connection.close();
   }
 };
 
 migrateData();
+console.log('migrating data completed successfully');
