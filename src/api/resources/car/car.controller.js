@@ -23,8 +23,7 @@ class CarController {
         limit: parseInt(perPage, 10) || 10,
         populate: {
           path: 'owner',
-          match: req.itemQueries['owner.age'] ? { age: req.itemQueries['owner.age'] } : {},
-          select: 'age',
+          select: '_id age firstName lastName',
         },
         select: CarController.selectionCars,
       };
