@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Road API
+  description: API documentation for managing roads
+  version: 1.0.0
+paths:
+  /api/roads:
+    post:
+      summary: Create a new road
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the road
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the road
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the road (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all roads
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Road'
+  /roads/{id}:
+    get:
+      summary: Get a road by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the road
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Road'
+        '404':
+          description: Road not found
+components:
+  schemas:
+    Road:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the road
+        title:
+          type: string
+          description: The title of the road
+        url:
+          type: string
+          format: uri
+          description: The URL of the road
+        rating:
+          type: number
+          format: float
+          description: The rating of the road (0 to 5)
+      required:
+        - title
+        - url
