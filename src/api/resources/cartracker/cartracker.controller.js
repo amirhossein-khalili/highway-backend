@@ -1,5 +1,6 @@
 import CartrackerHelper from './cartracker.helper.js';
 import Cartracker from './cartracker.model.js';
+import { point, multiLineString, booleanPointInPolygon } from '@turf/turf';
 
 class CartrackerController {
   static selectionCartracker = 'car location date';
@@ -75,24 +76,74 @@ class CartrackerController {
   static async illegalTrafficHeavyVehicles(req, res, next) {
     try {
       const heavyCars = req.heavyCars;
-      const narrowRoads = req.narrowRoads;
-      const polygan = await CartrackerHelper.convertToPolygonCoordinates(
-        narrowRoads.map((road) => road.location.coordinates)
-      );
+      const roads = req.narrowRoads;
 
+      // Find car trackers only for heavy vehicles
       const cartrackers = await Cartracker.find({
         car: { $in: heavyCars },
-        'location.coordinates': {
-          $geoWithin: {
-            $geometry: {
-              type: 'MultiLineString',
-              coordinates: polygan,
-            },
-          },
-        },
-      }).populate('car');
+      });
 
-      res.status(200).json({ heavyVehicles: cartrackers });
+      const unauthorizedTraffic = [];
+
+      for (const tracker of cartrackers) {
+        try {
+          // const trackerPoint = point(tracker.location[0].coordinates);
+          const loc = tracker.location;
+          const trackerPoint = point(loc[0].coordinates);
+
+          for (const road of roads) {
+            try {
+              const roadLineString = multiLineString(road.location.coordinates);
+              const check = booleanPointInPolygon(trackerPoint, roadLineString);
+              if (booleanPointInPolygon(trackerPoint, roadLineString)) {
+                unauthorizedTraffic.push({
+                  car: tracker.car,
+                  road: road.name,
+                  time: tracker.date,
+                });
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (error) {}
+      }
+      // for (const tracker of cartrackers) {
+      //   try {
+      //     const point = point(tracker.location.coordinates);
+
+      //     narrowRoads.forEach((road) => {
+      //       console.log(road.location.coordinates);
+      //       const lineString = multiLineString(road.location.coordinates);
+
+      //       if (booleanPointInPolygon(point, lineString)) {
+      //         unauthorizedTraffic.push({
+      //           car: tracker.car,
+      //           road: road.name,
+      //           time: tracker.date,
+      //         });
+      //       }
+      //     });
+      //   } catch (error) {
+      //     console.log(error);
+      //   }
+      // }
+
+      // console.log(narrowRoads);
+      // return res.send({ heavyCars, narrowRoads });
+      // const cartrackers = await Cartracker.find({
+      //   car: { $in: heavyCars },
+      //   'location.coordinates': {
+      //     $geoWithin: {
+      //       $geometry: {
+      //         type: 'MultiLineString',
+      //         coordinates: multiString,
+      //       },
+      //     },
+      //   },
+      // }).populate('car');
+
+      res.status(200).json({ heavyVehicles: unauthorizedTraffic });
     } catch (error) {
       console.error(error);
       res.status(500).json('an error occurred please try again later');
