@@ -1,8 +1,8 @@
 import Road from './road.model.js';
 
 class RoadController {
-  static selectionRoad = 'title url rating';
-  static selectionRoads = 'title url rating';
+  static selectionRoad = 'name width location';
+  static selectionRoads = 'name width location';
 
   static async create(req, res, next) {
     try {
