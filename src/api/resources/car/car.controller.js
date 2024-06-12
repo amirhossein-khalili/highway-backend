@@ -3,7 +3,7 @@ import Car from './car.model.js';
 class CarController {
   static selectionCar = 'type color length owner';
   static selectionCars = 'type color length owner';
-
+  static selectionOwnerCar = '_id age firstName lastName';
   static async create(req, res, next) {
     try {
       const newCar = new Car(req.body);
@@ -23,7 +23,7 @@ class CarController {
         limit: parseInt(perPage, 10) || 10,
         populate: {
           path: 'owner',
-          select: '_id age firstName lastName',
+          select: CarController.selectionOwnerCar,
         },
         select: CarController.selectionCars,
       };
@@ -43,7 +43,7 @@ class CarController {
     try {
       const car = await Car.findById(req.params.id)
         .select(CarController.selectionCars)
-        .populate('owner', 'id firstName');
+        .populate('owner', CarController.selectionOwnerCar);
 
       if (!car) return res.status(404).json({ message: 'car not found ' });
       return res.json(car);
