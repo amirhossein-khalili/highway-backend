@@ -1,10 +1,14 @@
 import CartrackerHelper from './cartracker.helper.js';
 import Cartracker from './cartracker.model.js';
+import Car from '../car/car.model.js';
 import { point, multiLineString, booleanPointInPolygon } from '@turf/turf';
+import CartrackerService from './cartracker.service.js';
 
 class CartrackerController {
   static selectionCartracker = 'car location date';
   static selectionCartrackers = 'car location date';
+  static selectionIllegalTrafficHeavyVehicles = 'car location date';
+  static selectionPopulateCarIllegalTrafficHeavyVehicles = 'type color length owner';
 
   static async create(req, res, next) {
     try {
@@ -76,74 +80,29 @@ class CartrackerController {
   static async illegalTrafficHeavyVehicles(req, res, next) {
     try {
       const heavyCars = req.heavyCars;
-      const roads = req.narrowRoads;
+      const narrowRoads = req.narrowRoads;
+      const query = req.itemQueries || {};
+      query.car = { $in: heavyCars };
 
-      // Find car trackers only for heavy vehicles
-      const cartrackers = await Cartracker.find({
-        car: { $in: heavyCars },
-      });
+      console.log(query);
+      const cartrackers = await Cartracker.find(query)
+        .populate('car', CartrackerController.selectionPopulateCarIllegalTrafficHeavyVehicles)
+        .select(CartrackerController.selectionIllegalTrafficHeavyVehicles);
 
-      const unauthorizedTraffic = [];
-
-      for (const tracker of cartrackers) {
-        try {
-          // const trackerPoint = point(tracker.location[0].coordinates);
-          const loc = tracker.location;
-          const trackerPoint = point(loc[0].coordinates);
-
-          for (const road of roads) {
-            try {
-              const roadLineString = multiLineString(road.location.coordinates);
-              const check = booleanPointInPolygon(trackerPoint, roadLineString);
-              if (booleanPointInPolygon(trackerPoint, roadLineString)) {
-                unauthorizedTraffic.push({
-                  car: tracker.car,
-                  road: road.name,
-                  time: tracker.date,
-                });
-              }
-            } catch (error) {
-              console.log(error);
+      let allResults = [];
+      for (const cartracker of cartrackers) {
+        const point = cartracker.location[0].coordinates;
+        for (const road of narrowRoads) {
+          const roadCoordinates = road.location.coordinates;
+          for (const roadCoordinate of roadCoordinates) {
+            const result = CartrackerService.isPointOnLineString(point, roadCoordinate);
+            if (result.isOnLine == true) {
+              allResults.push(cartracker);
             }
           }
-        } catch (error) {}
+        }
       }
-      // for (const tracker of cartrackers) {
-      //   try {
-      //     const point = point(tracker.location.coordinates);
-
-      //     narrowRoads.forEach((road) => {
-      //       console.log(road.location.coordinates);
-      //       const lineString = multiLineString(road.location.coordinates);
-
-      //       if (booleanPointInPolygon(point, lineString)) {
-      //         unauthorizedTraffic.push({
-      //           car: tracker.car,
-      //           road: road.name,
-      //           time: tracker.date,
-      //         });
-      //       }
-      //     });
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
-      // }
-
-      // console.log(narrowRoads);
-      // return res.send({ heavyCars, narrowRoads });
-      // const cartrackers = await Cartracker.find({
-      //   car: { $in: heavyCars },
-      //   'location.coordinates': {
-      //     $geoWithin: {
-      //       $geometry: {
-      //         type: 'MultiLineString',
-      //         coordinates: multiString,
-      //       },
-      //     },
-      //   },
-      // }).populate('car');
-
-      res.status(200).json({ heavyVehicles: unauthorizedTraffic });
+      return res.send({ allResults });
     } catch (error) {
       console.error(error);
       res.status(500).json('an error occurred please try again later');
