@@ -53,6 +53,23 @@ class CartrackerService {
       res.status(500).json('an error occurred please try again later');
     }
   };
+
+  static calculateDistance = (point1, point2) => {
+    try {
+      // Convert input points to turf.js points
+      const pt1 = _point(point1);
+      const pt2 = _point(point2);
+
+      // Calculate the distance between points in kilometers
+      const distance = _distance(pt1, pt2, { units: 'kilometers' });
+
+      // Return the distance and comparison result
+      return { distance: distance };
+    } catch (error) {
+      console.error(error);
+      res.status(500).json('an error occurred please try again later');
+    }
+  };
 }
 
 export default CartrackerService;
