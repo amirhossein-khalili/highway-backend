@@ -12,10 +12,12 @@ const roadSchema = new mongoose.Schema(
         default: 'MultiLineString',
       },
       coordinates: [
-        {
-          type: [Number],
-          index: '2dsphere',
-        },
+        [
+          {
+            type: [Number],
+            index: '2dsphere',
+          },
+        ],
       ],
     },
   },
