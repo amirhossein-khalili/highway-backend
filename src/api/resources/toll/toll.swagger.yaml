@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Toll API
+  description: API documentation for managing tolls
+  version: 1.0.0
+paths:
+  /api/tolls:
+    post:
+      summary: Create a new toll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the toll
+                url:
+                  type: string
+                  format: uri
+                  description: The URL of the toll
+                rating:
+                  type: number
+                  format: float
+                  description: The rating of the toll (0 to 5)
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+    get:
+      summary: Get all tolls
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Toll'
+  /tolls/{id}:
+    get:
+      summary: Get a toll by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the toll
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Toll'
+        '404':
+          description: Toll not found
+components:
+  schemas:
+    Toll:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the toll
+        title:
+          type: string
+          description: The title of the toll
+        url:
+          type: string
+          format: uri
+          description: The URL of the toll
+        rating:
+          type: number
+          format: float
+          description: The rating of the toll (0 to 5)
+      required:
+        - title
+        - url
