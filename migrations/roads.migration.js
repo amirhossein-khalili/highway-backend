@@ -28,6 +28,14 @@ function extractCoordinates(data) {
   return coordinates;
 }
 
+function groupCoordinates(coordinates) {
+  const groupedCoordinates = [];
+  for (let i = 0; i < coordinates.length - 1; i += 2) {
+    groupedCoordinates.push([coordinates[i], coordinates[i + 1]]);
+  }
+  return groupedCoordinates;
+}
+
 const migrateData = async () => {
   try {
     await mongoose.connect(process.env.DB);
@@ -36,7 +44,8 @@ const migrateData = async () => {
       const geom = extractCoordinates(data);
       if (typeof geom[0][0] !== 'number') {
       } else {
-        const multiLineString = { type: 'MultiLineString', coordinates: geom };
+        const coordinates = groupCoordinates(geom);
+        const multiLineString = { type: 'MultiLineString', coordinates: coordinates };
 
         await Road.create({
           name: data.name,
