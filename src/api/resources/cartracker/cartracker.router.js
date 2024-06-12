@@ -4,6 +4,7 @@ import validateSchema from '../../../utils/validateSchema.utils.js';
 import newCartrackerSchema from './cartracker.validation.js';
 import RoadMiddleware from '../road/road.middleware.js';
 import CarMiddleware from '../car/car.middleware.js';
+import CartrackerMiddleware from './cartracker.middleware.js';
 
 class CartrackerRouter {
   constructor() {
@@ -22,6 +23,7 @@ class CartrackerRouter {
       .get(
         RoadMiddleware.narrowRoads,
         CarMiddleware.heavyCars,
+        CartrackerMiddleware.processQueries,
         CartrackerController.illegalTrafficHeavyVehicles
       );
 
