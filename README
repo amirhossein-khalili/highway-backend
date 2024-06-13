@@ -31,7 +31,7 @@ Users can interact with the following authentication endpoints to register and l
 
 ## Default Credentials
 
-- **Username**: National code or mobile number
+- **Email**: email or National code
 - **Password**: User's password
 
 ## Example Requests
