@@ -13,7 +13,10 @@ class TollRouter {
     this.router
       .route('/user')
       .get(passport.authenticate('jwt', { session: false }), TollController.user);
+
     this.router.route('/car/:carId').get(TollMiddleware.checkCarExist, TollController.car);
+
+    this.router.route('/violetlist').get(TollController.violetlist);
   }
 }
 

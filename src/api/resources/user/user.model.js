@@ -10,7 +10,10 @@ const userSchema = new Schema(
     lastName: String,
     nationalCode: String,
     age: Number,
-    totalTollPaid: Number,
+    totalTollPaid: {
+      type: Number,
+      default: 0,
+    },
     role: {
       type: String,
       enum: ['admin', 'client', 'superadmin'],
