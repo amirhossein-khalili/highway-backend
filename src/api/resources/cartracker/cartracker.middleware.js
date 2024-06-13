@@ -6,7 +6,7 @@ class CartrackerMiddleware {
       // Filter by startTime
       if (req.query.startTime) {
         const startTime = new Date(req.query.startTime);
-        itemQueries.date = { ...itemQueries.date, $gte: startTime };
+        itemQueries.date = { $gte: startTime };
       }
 
       // Filter by endTime
