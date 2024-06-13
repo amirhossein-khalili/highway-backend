@@ -5,11 +5,19 @@ const locationSchema = Joi.object({
   coordinates: Joi.array().items(Joi.number()).required(),
 });
 
-const newCartrackerSchema = Joi.object({
+export const newCartrackerSchema = Joi.object({
   car: Joi.string()
     .pattern(/^[0-9a-fA-F]{24}$/)
     .required(),
   location: Joi.array().items(locationSchema).required(),
   date: Joi.date().required(),
 });
-export default newCartrackerSchema;
+
+export const nearStationSchema = Joi.object({
+  stationId: Joi.string()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .required(),
+  range: Joi.number().required(),
+  carType: Joi.string().valid('small', 'big').required(),
+  date: Joi.date().optional(),
+});

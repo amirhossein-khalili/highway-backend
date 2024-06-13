@@ -1,7 +1,6 @@
-import CartrackerHelper from './cartracker.helper.js';
 import Cartracker from './cartracker.model.js';
+import Station from '../station/station.model.js';
 import Car from '../car/car.model.js';
-import { point, multiLineString, booleanPointInPolygon } from '@turf/turf';
 import CartrackerService from './cartracker.service.js';
 
 class CartrackerController {
@@ -105,6 +104,59 @@ class CartrackerController {
     } catch (error) {
       console.error(error);
       res.status(500).json('an error occurred please try again later');
+    }
+  }
+
+  static async nearStation(req, res, next) {
+    try {
+      // Ensure the date is properly parsed from the request body or default to the current date
+      const date = req.body.date ? new Date(req.body.date) : new Date();
+
+      if (isNaN(date.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+
+      // Calculate the time range (±2 minutes)
+      const startDate = new Date(date.getTime() - 5 * 60 * 1000); // 5 minutes before
+      const endDate = new Date(date.getTime() + 5 * 60 * 1000); // 5 minutes after
+
+      const range = req.body.range;
+      const carType = req.body.carType;
+
+      // Fetch the station by ID
+      const station = await Station.findById(req.body.stationId);
+      if (!station) return res.status(404).json({ message: 'Station not found' });
+
+      // Fetch cars by type
+      const cars = await Car.find({ type: carType }).select('_id').lean();
+      if (!cars.length) return res.status(404).json({ message: 'No cars found' });
+
+      // Fetch car trackers within the time range and for the given cars
+      const cartrackers = await Cartracker.find({
+        car: { $in: cars.map((car) => car._id) },
+        date: { $gte: startDate, $lte: endDate },
+      }).populate('car');
+
+      const stationCoordinates = station.location[0].coordinates;
+      let nearStationCars = [];
+      for (const cartracker of cartrackers) {
+        const cartrackerCoordinates = cartracker.location[0].coordinates;
+        const kmRange = range / 1000;
+        const resp = CartrackerService.calculateDistanceAndCompare(
+          stationCoordinates,
+          cartrackerCoordinates,
+          kmRange
+        );
+        if (resp.comparisonResult == 'less') nearStationCars.push(cartracker.car);
+      }
+
+      const uniqueNearStationCars = Array.from(new Set(nearStationCars.map((car) => car._id))).map(
+        (id) => nearStationCars.find((car) => car._id === id)
+      );
+      return res.json({ nearStationCars: uniqueNearStationCars });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'An error occurred, please try again later' });
     }
   }
 }
