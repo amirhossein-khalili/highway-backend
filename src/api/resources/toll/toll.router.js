@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import TollController from './toll.controller.js';
+import TollMiddleware from './toll.middleware.js';
+import passport from 'passport';
 
 class TollRouter {
   constructor() {
@@ -8,7 +10,10 @@ class TollRouter {
   }
 
   initializeRoutes() {
-    this.router.route('/').get(TollController.findAll);
+    this.router
+      .route('/user')
+      .get(passport.authenticate('jwt', { session: false }), TollController.user);
+    this.router.route('/car/:carId').get(TollMiddleware.checkCarExist, TollController.car);
   }
 }
 
