@@ -84,7 +84,6 @@ class CartrackerController {
       const query = req.itemQueries || {};
       query.car = { $in: heavyCars };
 
-      console.log(query);
       const cartrackers = await Cartracker.find(query)
         .populate('car', CartrackerController.selectionPopulateCarIllegalTrafficHeavyVehicles)
         .select(CartrackerController.selectionIllegalTrafficHeavyVehicles);
