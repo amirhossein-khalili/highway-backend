@@ -57,7 +57,7 @@ const migrateData = async () => {
         const user = await User.create({
           firstName: userData.name,
           nationalCode: userData.national_code,
-          email: userData.national_code,
+          email: userData.email || userData.national_code,
           age: userData.age,
           password: authService.encryptPassword(password),
           totalTollPaid: userData.total_toll_paid,
